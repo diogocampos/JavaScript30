@@ -9,7 +9,9 @@
 
     <div class="clock">
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
+        <div class="hand hour-hand">
+          <div class="inner"></div>
+        </div>
         <div class="hand min-hand"></div>
         <div class="hand second-hand"></div>
       </div>
@@ -56,17 +58,70 @@
     }
 
     .hand {
-      width:50%;
+      width:55%;
       height:6px;
-      background:black;
       position: absolute;
       top:50%;
+
+      transform: rotate(90deg);
+      transform-origin: 90.90909091%;
+      transition: all 0.1s;
+      transition-timing-function: cubic-bezier(0.5, 1.8, 0.6, 1);
+    }
+
+    .hour-hand .inner {
+      background: black;
+      margin-left: 25%;
+      width: 75%;
+      height: 100%;
+    }
+
+    .min-hand {
+      background: black;
+    }
+
+    .second-hand {
+      background: #c11;
     }
 
   </style>
 
   <script>
 
+    class Hand {
+      constructor(selector) {
+        this.element = document.querySelector(selector)
+        this.angle = 90
+      }
+
+      setAngle(angle) {
+        angle += 90
+        const {style} = this.element
+
+        if (angle < this.angle) {
+          style.transition = 'none'
+          style.transform = `rotate(${this.angle - 360}deg)`
+        }
+        setTimeout(() => {
+          style.transition = ''
+          style.transform = `rotate(${this.angle = angle}deg)`
+        }, 10)
+      }
+    }
+
+    const hourHand = new Hand('.hour-hand')
+    const minuteHand = new Hand('.min-hand')
+    const secondHand = new Hand('.second-hand')
+
+    function update() {
+      const now = new Date()
+      hourHand.setAngle(30 * (now.getHours() % 12))
+      minuteHand.setAngle(6 * now.getMinutes())
+      secondHand.setAngle(6 * now.getSeconds())
+    }
+
+    update()
+    setInterval(update, 1000)
 
   </script>
 </body>
