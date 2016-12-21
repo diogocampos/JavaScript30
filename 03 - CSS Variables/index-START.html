@@ -22,6 +22,22 @@
 
   <style>
 
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      background: var(--base);
+      padding: var(--spacing);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
+
     /*
       misc styles, nothing to do with CSS variables
     */
@@ -48,6 +64,15 @@
   </style>
 
   <script>
+
+    const root = document.documentElement
+    const controls = document.querySelector('.controls')
+
+    controls.addEventListener('input', ({target: input}) => {
+      const sizing = input.dataset.sizing || ''
+      root.style.setProperty(`--${input.name}`, `${input.value}${sizing}`)
+    })
+
   </script>
 
 </body>
