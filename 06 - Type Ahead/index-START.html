@@ -17,6 +17,40 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+let cities = []
+fetch(endpoint)
+  .then(response => response.json())
+  .then(array => cities = array)
+
+const input = document.querySelector('input.search')
+const suggestions = document.querySelector('ul.suggestions')
+
+input.addEventListener('input', () => updateSuggestions(input.value))
+updateSuggestions('')
+
+function updateSuggestions(query) {
+  suggestions.innerHTML = (query.length === 0) ? '' :
+    find(query, cities)
+      .map(city => `<li>
+        <span class="name">${hl(query, `${city.city}, ${city.state}`)}</span>
+        <span class="population">${(+city.population).toLocaleString()}</span>
+      </li>`)
+      .join('')
+}
+
+function find(query, cities) {
+  query = query.toLowerCase()
+  return cities.filter(city =>
+    city.city.toLowerCase().includes(query) ||
+    city.state.toLowerCase().includes(query)
+  )
+}
+
+function hl(substring, string) {
+  const re = new RegExp(substring, 'gi')
+  return string.replace(re, '<span class="hl">$&</span>')
+}
+
 </script>
   </body>
 </html>
