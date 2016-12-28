@@ -7,11 +7,60 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+
+  const canvas = document.querySelector('#draw')
+  const ctx = canvas.getContext('2d')
+
+  function fitToWindow() {
+    ;[canvas.width, canvas.height] = [window.innerWidth, window.innerHeight]
+  }
+  window.addEventListener('resize', (fitToWindow(), fitToWindow))
+
+  canvas.addEventListener('mousedown', e => e.buttons & 1 ? startDrawing(e) : 0)
+  canvas.addEventListener('mousemove', draw)
+  canvas.addEventListener('mouseup', e => !(e.buttons & 1) ? stopDrawing() : 0)
+  canvas.addEventListener('mouseleave', stopDrawing)
+
+  ctx.globalCompositeOperation = 'hue'
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+
+  let isDrawing
+  let lastX, lastY
+  let hue = 0
+  let lineWidth = 1, increment = +0.1, maxLineWidth = 50
+
+  function startDrawing({offsetX, offsetY}) {
+    isDrawing = true
+    ;[lastX, lastY] = [offsetX, offsetY]
+  }
+
+  function draw({offsetX, offsetY}) {
+    if (!isDrawing) return ;
+
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+    hue = (hue + 1) % 360
+
+    ctx.lineWidth = lineWidth
+    lineWidth += increment
+    if (lineWidth <= 1 || lineWidth >= maxLineWidth) increment = -increment
+
+    ctx.beginPath()
+    ctx.moveTo(lastX, lastY)
+    ctx.lineTo(lastX = offsetX, lastY = offsetY)
+    ctx.stroke()
+  }
+
+  function stopDrawing() {
+    isDrawing = false
+  }
+
 </script>
 
 <style>
   html, body {
     margin:0;
+    overflow: hidden;
   }
 </style>
 
