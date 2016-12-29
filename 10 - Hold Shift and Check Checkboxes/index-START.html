@@ -104,6 +104,20 @@
   </div>
 
 <script>
+
+  const checkboxes = Array.from(document.querySelectorAll('.inbox input'))
+  let lastCheckedIndex = -1
+
+  checkboxes.forEach((checkbox, thisIndex) => {
+    checkbox.addEventListener('click', function(e) {
+      if (e.shiftKey && this.checked && lastCheckedIndex >= 0) {
+        const [first, last] = [lastCheckedIndex, thisIndex].sort()
+        checkboxes.slice(first + 1, last).forEach(cb => cb.checked = true)
+      }
+      lastCheckedIndex = (this.checked) ? thisIndex : -1
+    })
+  })
+
 </script>
 </body>
 </html>
