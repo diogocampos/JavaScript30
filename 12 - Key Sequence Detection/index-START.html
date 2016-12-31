@@ -7,6 +7,41 @@
 </head>
 <body>
 <script>
+
+  const SEQUENCE = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'KeyB', 'KeyA',
+  ]
+  const TIMEOUT = 1000
+  const onSequenceMatch = cornify_add
+
+  let matched = 0
+  let timeoutId
+
+  function onKeydown(e) {
+    if (timeoutId) timeoutId = clearTimeout(timeoutId)
+
+    if (e.code === SEQUENCE[matched]) {
+      matched += 1;console.log(matched)
+      if (matched === SEQUENCE.length) {
+        matched = 0
+        onSequenceMatch()
+      }
+      else {
+        timeoutId = setTimeout(() => { matched = 0 }, TIMEOUT)
+      }
+    }
+    else {
+      matched = 0
+    }
+  }
+
+  // disable Cornify's built-in Konami Code detection:
+  document.onkeydown = null
+
+  document.addEventListener('keydown', onKeydown)
+
 </script>
 </body>
 </html>
