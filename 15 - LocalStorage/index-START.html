@@ -22,17 +22,118 @@
     <form class="add-items">
       <input type="text" name="item" placeholder="Item Name" required>
       <input type="submit" value="+ Add Item">
+      <br />
+      <button type="button" name="checkAll">Check All</button>
+      <button type="button" name="uncheckAll">Uncheck All</button>
+      <button type="button" name="deleteAll">Delete All</button>
     </form>
   </div>
 
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+
+  const items = loadFromStorage('items') || []
+  populate(itemsList, items)
+
+  itemsList.addEventListener('change', onToggleItem)
+  addItems.addEventListener('submit', onSubmitItem)
+  addItems.checkAll.addEventListener('click', onCheckAll)
+  addItems.uncheckAll.addEventListener('click', onUncheckAll)
+  addItems.deleteAll.addEventListener('click', onDeleteAll)
+
+
+  function onToggleItem({target: checkbox}) {
+    const index = +checkbox.dataset.index
+    checkItem(items, index, checkbox.checked)
+    commitItems({rerender: false})
+  }
+
+  function onSubmitItem(e) {
+    e.preventDefault()
+    addItem(items, this.item.value)
+    commitItems()
+    this.reset()
+  }
+
+  function onCheckAll() {
+    checkAllItems(items, true)
+    commitItems()
+  }
+
+  function onUncheckAll() {
+    checkAllItems(items, false)
+    commitItems()
+  }
+
+  function onDeleteAll() {
+    deleteAllItems(items)
+    commitItems()
+  }
+
+
+  function commitItems({rerender = true} = {}) {
+    saveToStorage('items', items)
+    if (rerender) populate(itemsList, items)
+  }
+
+  function populate(itemsList, items) {
+    itemsList.innerHTML = ''
+    itemsList.append(...items.map(renderItem))
+  }
+
+  function saveToStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value))
+  }
+
+  function loadFromStorage(key) {
+    return JSON.parse(localStorage.getItem(key))
+  }
+
+
+  function addItem(items, text) {
+    items.push({
+      text,
+      checked: false,
+    })
+  }
+
+  function checkItem(items, index, checked) {
+    items[index].checked = checked
+  }
+
+  function checkAllItems(item, checked) {
+    items.forEach(item => item.checked = checked)
+  }
+
+  function deleteAllItems(items) {
+    items.splice(0)
+  }
+
+
+  function renderItem(item, index) {
+    return h('li', {},
+      h('input', {
+        type: 'checkbox',
+        id: `item${index}`,
+        'data-index': index,
+        checked: item.checked ? 'checked' : null,
+      }),
+      h('label', {for: `item${index}`}, item.text)
+    )
+  }
+
+  function h(tagName, attributes, ...children) {
+    const element = document.createElement(tagName)
+    for (const [key, value] of Object.entries(attributes)) {
+      if (value != null) element.setAttribute(key, value)
+    }
+    element.append(...children)
+    return element
+  }
 
 </script>
 
 
 </body>
 </html>
-
