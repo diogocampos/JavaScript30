@@ -31,6 +31,43 @@
   </style>
 
 <script>
+
+const hero = document.querySelector('.hero')
+const text = hero.querySelector('h1')
+
+const maxShadow = 500
+const blur = 7
+const alpha = 0.7
+
+hero.addEventListener('mousemove', onAnimationFrame(updateShadow))
+
+function updateShadow(e) {
+  const offsetX = e.pageX - this.offsetLeft
+  const offsetY = e.pageY - this.offsetTop
+
+  const shadowX = (-0.5 + offsetX / this.offsetWidth) * maxShadow
+  const shadowY = (-0.5 + offsetY / this.offsetHeight) * maxShadow
+
+  text.style.textShadow = `
+    ${+shadowX}px ${+shadowY}px ${blur}px rgba(255, 0, 255, ${alpha}),
+    ${-shadowX}px ${+shadowY}px ${blur}px rgba(0, 255, 255, ${alpha}),
+    ${+shadowY}px ${-shadowX}px ${blur}px rgba(0, 255, 0, ${alpha}),
+    ${-shadowY}px ${+shadowX}px ${blur}px rgba(0, 0, 255, ${alpha})
+  `
+}
+
+function onAnimationFrame(fn) {
+  let pendingRequest = null
+  return function() {
+    if (pendingRequest !== null) return
+    const args = arguments
+    pendingRequest = requestAnimationFrame(() => {
+      pendingRequest = null
+      fn.apply(this, args)
+    })
+  }
+}
+
 </script>
 </body>
 </html>
