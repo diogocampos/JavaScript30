@@ -57,6 +57,22 @@
     /*Compass: https://thenounproject.com/search/?q=compass&i=592352*/
   </style>
   <script>
+
+  const compass = document.querySelector('.arrow')
+  const speedometer = document.querySelector('.speed-value')
+
+  navigator.geolocation.watchPosition(updatePosition, console.error)
+
+  function updatePosition(position) {
+    const {heading, speed} = position.coords
+    compass.style.transform = `rotate(${heading || 0}deg)`
+    speedometer.textContent = (speed != null) ? mpsToKph(speed) : '?'
+  }
+
+  function mpsToKph(speed) {
+    return speed * 3.6
+  }
+
   </script>
 </body>
 </html>
