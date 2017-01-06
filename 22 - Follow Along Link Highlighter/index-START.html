@@ -26,8 +26,31 @@
     </div>
 
   <script>
-    // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+
+  const highlight = document.createElement('div')
+  highlight.classList.add('highlight')
+  document.body.append(highlight)
+
+  for (const link of document.querySelectorAll('a')) {
+    link.addEventListener('mouseenter', moveHighlight)
+  }
+
+  function moveHighlight() {
+    highlight.style.left = totalOffset('Left', this) + 'px'
+    highlight.style.top = totalOffset('Top', this) + 'px'
+    highlight.style.width = this.offsetWidth + 'px'
+    highlight.style.height = this.offsetHeight + 'px'
+  }
+
+  function totalOffset(name, element) {
+    let offset = 0
+    while (element) {
+      offset += element['offset' + name]
+      element = element.offsetParent
+    }
+    return offset
+  }
+
   </script>
 </body>
 </html>
-
