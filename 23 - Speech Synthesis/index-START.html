@@ -17,24 +17,82 @@
       </select>
 
       <label for="rate">Rate:</label>
-      <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
+      <input name="rate" type="range" min="0.1" max="3" step="0.1" value="1">
 
       <label for="pitch">Pitch:</label>
+      <input name="pitch" type="range" min="0" max="2" step="0.1" value="1">
 
-      <input name="pitch" type="range" min="0" max="2" step="0.1">
       <textarea name="text">Hello! I love JavaScript 👍</textarea>
+
       <button id="stop">Stop!</button>
       <button id="speak">Speak</button>
 
     </div>
 
 <script>
+
+  // Initialization
+
   const msg = new SpeechSynthesisUtterance();
   let voices = [];
   const voicesDropdown = document.querySelector('[name="voice"]');
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
+
+  speechSynthesis.addEventListener('voiceschanged', loadVoices, {once: true})
+  voicesDropdown.addEventListener('change', setVoice)
+
+  for (const option of options) {
+    setOption.call(option)
+    option.addEventListener('input', setOption)
+  }
+
+  speakButton.addEventListener('click', speak)
+  stopButton.addEventListener('click', stopSpeaking)
+
+  // Event handlers
+
+  function loadVoices() {
+    voices = this.getVoices().filter(sameLanguage)
+    voicesDropdown.innerHTML = ''
+    voices.forEach((voice, index) => {
+      voicesDropdown.add(option(index, `${voice.name} (${voice.lang})`))
+    })
+  }
+
+  function setVoice() {
+    msg.voice = voices[+this.value]
+    speak()
+  }
+
+  function setOption() {
+    msg[this.name] = this.value
+    speak()
+  }
+
+  function speak() {
+    stopSpeaking()
+    speechSynthesis.speak(msg)
+  }
+
+  function stopSpeaking() {
+    speechSynthesis.cancel()
+  }
+
+  // Helpers
+
+  function sameLanguage(voice) {
+    return voice.lang.startsWith(document.documentElement.lang)
+  }
+
+  function option(value, text) {
+    const opt = document.createElement('option')
+    opt.value = value
+    opt.text = text
+    return opt
+  }
+
 </script>
 
 </body>
