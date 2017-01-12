@@ -208,6 +208,42 @@
 </style>
 
 <script>
+
+const nav = document.querySelector('nav')
+const menus = nav.querySelectorAll('.cool > li')
+const dropdownBackground = nav.querySelector('.dropdownBackground')
+
+for (const menu of menus) {
+  menu.addEventListener('mouseenter', showDropdown)
+  menu.addEventListener('mouseleave', hideDropdown)
+}
+
+function showDropdown() {
+  this.classList.add('trigger-enter')
+  setTimeout(() => {
+    if (this.classList.contains('trigger-enter')) {
+      this.classList.add('trigger-enter-active')
+    }
+  }, 150)
+  dropdownBackground.classList.add('open')
+
+  const dropdown = this.querySelector('.dropdown')
+  const bounds = dropdown.getBoundingClientRect()
+  const navBounds = nav.getBoundingClientRect()
+
+  dropdownBackground.style.transform = `translate(
+    ${bounds.left - navBounds.left}px,
+    ${bounds.top - navBounds.top}px
+  )`
+  dropdownBackground.style.width = bounds.width + 'px'
+  dropdownBackground.style.height = bounds.height + 'px'
+}
+
+function hideDropdown() {
+  this.classList.remove('trigger-enter', 'trigger-enter-active')
+  dropdownBackground.classList.remove('open')
+}
+
 </script>
 
 </body>
