@@ -15,6 +15,40 @@
   </div>
 
 <script>
+
+const video = document.querySelector('video')
+const speedBar = document.querySelector('.speed')
+const speedSlider = document.querySelector('.speed-bar')
+
+const minSpeed = 0.4
+const maxSpeed = 4.0
+
+speedBar.addEventListener('mousedown', leftButton(setSpeed))
+speedBar.addEventListener('mousemove', leftButton(setSpeed))
+
+//
+
+function setSpeed(e) {
+  e.preventDefault()
+  const ratio = e.offsetY / this.offsetHeight
+  const playbackRate = speed(ratio)
+  speedSlider.style.height = `${ratio * 100}%`
+  speedSlider.textContent = `${playbackRate.toFixed(1)}×`
+  video.playbackRate = playbackRate
+}
+
+//
+
+function speed(ratio) {
+  return minSpeed + (maxSpeed - minSpeed) * ratio
+}
+
+function leftButton(callback) {
+  return function(e) {
+    if (e.buttons & 1) return callback.call(this, e)
+  }
+}
+
 </script>
 </body>
 </html>
