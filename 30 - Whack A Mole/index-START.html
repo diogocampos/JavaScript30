@@ -33,9 +33,57 @@
   </div>
 
 <script>
-  const holes = document.querySelectorAll('.hole');
+
   const scoreBoard = document.querySelector('.score');
   const moles = document.querySelectorAll('.mole');
+
+  moles.forEach(mole => mole.addEventListener('mousedown', whackMole))
+
+  //
+
+  const minTimeout = 200
+  const maxTimeout = 2000
+  const duration = 10000
+
+  let score, gameOver
+
+  function startGame() {
+    scoreBoard.textContent = `${score = 0}`
+    gameOver = false
+    setTimeout(() => gameOver = true, duration)
+    gameLoop()
+  }
+
+  function whackMole() {
+    hideMole(this)
+    scoreBoard.textContent = `${score += 1}`
+  }
+
+  //
+
+  function gameLoop() {
+    const mole = moles[randomInt(0, moles.length)]
+    const time = randomInt(minTimeout, maxTimeout)
+
+    showMole(mole)
+    setTimeout(() => {
+      hideMole(mole)
+      if (! gameOver) gameLoop()
+    }, time)
+  }
+
+  function showMole(mole) {
+    mole.parentElement.classList.add('up')
+  }
+
+  function hideMole(mole) {
+    mole.parentElement.classList.remove('up')
+  }
+
+  function randomInt(min, max) {
+    // returns a random integer between min (inclusive) and max (exclusive)
+    return min + Math.floor((max - min) * Math.random())
+  }
 
 </script>
 </body>
